@@ -1,0 +1,34 @@
+@import '../../style/variables.scss';
+
+.char__item {
+  width: 200px;
+  height: 318px;
+  background-color: $dark;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.25);
+  padding: 15px;
+  cursor: pointer;
+  transition: 0.3s transform ease;
+  overflow: hidden;
+
+  &_selected {
+    box-shadow: 0 5px 20px $main-color;
+    transform: translateY(-8px);
+    opacity: 1;
+  }
+
+  &-enter {
+    transform: scale(0);
+  }
+  &-enter-active {
+    opacity: 0;
+  }
+  &-enter-done {
+    transform: scale(1);
+  }
+  &-exit {
+    transform: scale(1);
+  }
+  &-exit-active {
+    opacity: 0;
+  }
+}
