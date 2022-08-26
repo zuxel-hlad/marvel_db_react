@@ -1,19 +1,20 @@
 import './comicsList.scss';
-import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import AppBanner from '../appBanner/AppBanner';
 import useApi from '../../services/MarvelService';
 import ListImage from '../listImage/ListImage';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import comicsListDefaultImage from '../../resources/img/comics-list-default.jpg';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 const ComicsList = () => {
   const [comicsOffset, setComicsOffset] = useState(0);
   const [comicsList, setComicsList] = useState([]);
   const [comicsEnded, setComicsEnded] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
-  const {loading, error, getComics} = useApi();
+  const { loading, error, getComics } = useApi();
 
   useEffect(() => updateComicsList(comicsOffset, true), []);
 
@@ -35,33 +36,39 @@ const ComicsList = () => {
 
   const renederedComics = (list) => {
     const comics = list.map((item, idx) => {
-      const {title, price, thumbnail, id} = item;
+      const { title, price, thumbnail, id } = item;
 
       return (
-        <li key={idx} className="comics__item">
-          <Link to={`comics/${id}`}>
-            <ListImage
-              src={thumbnail}
-              image={comicsListDefaultImage}
-              imageClassName="comics__item-img"
-              alt={title}
-            />
-            <div className="comics__item-name">{title}</div>
-            <div className="comics__item-price">{price}</div>
-          </Link>
-        </li>
+        <CSSTransition key={idx} classNames="comics__item" timeout={300}>
+          <li className="comics__item">
+            <Link to={`comics/${id}`}>
+              <ListImage
+                src={thumbnail}
+                image={comicsListDefaultImage}
+                imageClassName="comics__item-img"
+                alt={title}
+              />
+              <div className="comics__item-name">{title}</div>
+              <div className="comics__item-price">{price}</div>
+            </Link>
+          </li>
+        </CSSTransition>
       );
     });
-    return <ul className="comics__grid">{comics}</ul>;
+    return (
+      <TransitionGroup className="comics__grid" component={'ul'}>
+        {comics}
+      </TransitionGroup>
+    );
   };
 
   const hideBtn = comicsEnded ? 'button__hide' : '';
-  const errorMessage = error ? <ErrorMessage/> : null;
-  const spinner = loading && !loadingMore ? <Spinner/> : null;
+  const errorMessage = error ? <ErrorMessage /> : null;
+  const spinner = loading && !loadingMore ? <Spinner /> : null;
 
   return (
     <div className="comics__list">
-      <AppBanner/>
+      <AppBanner />
       {errorMessage}
       {spinner}
       {renederedComics(comicsList)}

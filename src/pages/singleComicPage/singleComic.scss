@@ -1,4 +1,4 @@
-@import '../../../style/variables';
+@import '../../style/variables';
 
 .single-comic {
   margin-top: 50px;
@@ -39,7 +39,7 @@
     line-height: 24px;
     border: none;
     background: $white;
-    transition: color .3s ease;
+    transition: color 0.3s ease;
     cursor: pointer;
 
     &:hover {
