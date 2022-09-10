@@ -18,6 +18,13 @@ const useApi = () => {
     return _transformCharacter(oneChar.data.results[0]);
   };
 
+  const getCharacterByName = async (name) => {
+    const oneChar = await request(
+      `${_apiBase}characters?name=${name}&${_apiKey}`
+    );
+    return _transformCharacter(oneChar.data.results[0]);
+  };
+
   const getComic = async (id) => {
     const oneComic = await request(`${_apiBase}comics/${id}?${_apiKey}`);
     return _transformComics(oneComic.data.results[0]);
@@ -83,6 +90,7 @@ const useApi = () => {
     error,
     getAllCharacters,
     getCharacter,
+    getCharacterByName,
     clearError,
     getComics,
     getComic,
