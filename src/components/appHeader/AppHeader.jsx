@@ -12,7 +12,7 @@ const AppHeader = () => {
       <nav className="app__menu">
         <ul>
           <li>
-            <NavLink to="/characters" activeClassName="link-active">
+            <NavLink exact to="/" activeClassName="link-active">
               Characters
             </NavLink>
           </li>
