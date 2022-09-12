@@ -1,7 +1,7 @@
-import { useHttp } from '../hooks/http.hook';
+import {useHttp} from '../hooks/http.hook';
 
 const useApi = () => {
-  const { loading, request, error, clearError } = useHttp();
+  const {loading, request, error, clearError} = useHttp();
   const _apiBase = 'https://gateway.marvel.com:443/v1/public/';
   const _apiKey = 'apikey=bd5992b076496b02a8ccc421dffe40bb';
   const _baseOffset = 210;
@@ -19,10 +19,8 @@ const useApi = () => {
   };
 
   const getCharacterByName = async (name) => {
-    const oneChar = await request(
-      `${_apiBase}characters?name=${name}&${_apiKey}`
-    );
-    return _transformCharacter(oneChar.data.results[0]);
+    const oneChar = await request(`${_apiBase}characters?name=${name}&${_apiKey}`);
+    return oneChar.data.results.map(_transformCharacter);
   };
 
   const getComic = async (id) => {
@@ -66,21 +64,21 @@ const useApi = () => {
       comics:
         char.comics.items.length > 10
           ? char.comics.items
-              .map((item) => ({
-                ...item,
-                id: item.resourceURI
-                  .split('/')
-                  .filter((item) => !isNaN(item) && item !== '')
-                  .join(),
-              }))
-              .slice(0, 10)
-          : char.comics.items.map((item) => ({
+            .map((item) => ({
               ...item,
               id: item.resourceURI
                 .split('/')
                 .filter((item) => !isNaN(item) && item !== '')
                 .join(),
-            })),
+            }))
+            .slice(0, 10)
+          : char.comics.items.map((item) => ({
+            ...item,
+            id: item.resourceURI
+              .split('/')
+              .filter((item) => !isNaN(item) && item !== '')
+              .join(),
+          })),
       selected: false,
     };
   };

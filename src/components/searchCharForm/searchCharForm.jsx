@@ -1,63 +1,55 @@
 import useApi from '../../services/MarvelService';
 import {Link} from 'react-router-dom';
 import {useState} from 'react';
-import {Field, Form, Formik, ErrorMessage} from 'formik';
+import {Field, Form, Formik, ErrorMessage as FormikErrorMessage} from 'formik';
 import * as Yup from 'yup';
 import './serachCharForm.scss';
-import MyErrorMessage from "../errorMessage/ErrorMessage";
+import ErrorMessage from "../errorMessage/ErrorMessage";
 
 const SearchCharForm = () => {
-  const [searchedValue, setSearchedValue] = useState('');
   const [searchedChar, setSearchedChar] = useState(null);
-  const {getCharacterByName, loading, clearError, error} = useApi();
+  const {loading, error, getCharacterByName, clearError} = useApi();
 
-  const getCharFromApi = async (char) => {
+  const onCharLoaded = (char) => {
+    setSearchedChar(char);
+  }
+
+  const getCharFromApi = async (name) => {
     clearError();
-    setSearchedChar(null)
-    setSearchedValue('');
-    const responseChar = await getCharacterByName(char);
-    setSearchedChar(responseChar);
+    setSearchedChar(null);
+    const responseChar = await getCharacterByName(name);
+    onCharLoaded(responseChar);
   };
 
-  let searchResultsForRender = null;
-  if (searchedChar && searchedValue) {
-    searchResultsForRender = (
-      <div className="search-form__group search-form__group_footer">
+  const searchResults = !searchedChar ? null : searchedChar.length > 0 ?
+    <div className="search-form__group search-form__group_footer">
         <span className="search-form__text search-form__text_success">
-          {`There is! Visit ${searchedChar.name} page?`}
+          {`There is! Visit ${searchedChar[0].name} page?`}
         </span>
-        <Link
-          className="button button__secondary"
-          to={`/characters/${searchedChar.name}`}
-        >
-          <div className="inner">TO PAGE</div>
-        </Link>
-      </div>
-    );
-  } else if (!searchedChar && searchedValue) {
-    searchResultsForRender = (
-      <div className="search-form__group search-form__group_footer">
+      <Link
+        className="button button__secondary"
+        to={`/characters/${searchedChar[0].name}`}
+      >
+        <div className="inner">TO PAGE</div>
+      </Link>
+    </div> :
+    <div className="search-form__group search-form__group_footer">
         <span className="search-form__text search-form__text_error">
           The character was not found. Check the name and try again!
         </span>
-      </div>
-    );
-  } else {
-    searchResultsForRender = null;
-  }
+    </div>;
 
-  const customErrorMessage = error ? <div className="search-form__critical-error"><MyErrorMessage/></div> : null
+  const errorMessage = error ? <div className="search-form__critical-error"><ErrorMessage/></div> : null;
 
   return (
     <Formik
-      initialValues={{char: ''}}
+      initialValues={{charName: ''}}
       validationSchema={Yup.object({
-        char: Yup.string()
+        charName: Yup.string()
           .min(2, 'Please enter more than 2 symbols!')
       })}
-      onSubmit={(values) => {
-        getCharFromApi(values.char);
-        setSearchedValue(values.char);
+      onSubmit={({charName}) => {
+        getCharFromApi(charName);
       }}>
       <Form className="search-form">
         <div className="search-form__group search-form__group_main">
@@ -67,8 +59,8 @@ const SearchCharForm = () => {
             </span>
             <Field
               className="search-form__input"
-              name="char"
-              id="char"
+              name="charName"
+              id="charName"
               type="text"
               placeholder="Enter character name"
             />
@@ -80,10 +72,12 @@ const SearchCharForm = () => {
             <div className="inner">FIND</div>
           </button>
         </div>
-        <ErrorMessage className="search-form__text search-form__text_error search-form__text_validate-error" name="char"
-                      component="span"/>
-        {customErrorMessage}
-        {searchResultsForRender}
+        <FormikErrorMessage
+          className="search-form__text search-form__text_error search-form__text_validate-error"
+          name="charName"
+          component="span"/>
+        {errorMessage}
+        {searchResults}
       </Form>
     </Formik>
   );
