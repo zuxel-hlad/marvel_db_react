@@ -1,47 +1,12 @@
-import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import useApi from '../../services/MarvelService';
-import Spinner from '../../components/spinner/Spinner';
-import ErrorMessage from '../../components/errorMessage/ErrorMessage';
-import { useHistory } from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 import comicsListDefaultImage from '../../resources/img/comics-list-default.jpg';
 import ListImage from '../../components/listImage/ListImage';
 import './singleComic.scss';
 
-const SingleComic = () => {
-  const [comic, setComic] = useState({});
-  const { loading, error, getComic, clearError } = useApi();
-  const { comicId } = useParams();
-  const { goBack } = useHistory();
+const SingleComic = ({data}) => {
+  const {title, thumbnail, price, pageCount, description, language} = data;
+  const {goBack} = useHistory();
 
-  useEffect(() => updateComic(comicId), [comicId]);
-
-  const onComicLoaded = (comicItem) => {
-    setComic({ ...comicItem });
-  };
-
-  const updateComic = async (id) => {
-    clearError();
-    const comicObj = await getComic(id);
-    onComicLoaded(comicObj);
-  };
-
-  const errorMessage = error ? <ErrorMessage /> : null;
-  const spinner = loading ? <Spinner /> : null;
-  const content = !(loading || error) ? (
-    <View comic={comic} goBack={goBack} />
-  ) : null;
-  return (
-    <>
-      {errorMessage}
-      {spinner}
-      {content}
-    </>
-  );
-};
-
-const View = ({ comic, goBack }) => {
-  const { title, thumbnail, price, pageCount, description, language } = comic;
 
   return (
     <div className="single-comic">
