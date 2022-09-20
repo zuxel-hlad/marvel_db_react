@@ -2,7 +2,6 @@ import './comicsList.scss';
 import { useState, useEffect } from 'react';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
-import AppBanner from '../appBanner/AppBanner';
 import useApi from '../../services/MarvelService';
 import ListImage from '../listImage/ListImage';
 import { Link } from 'react-router-dom';
@@ -68,7 +67,6 @@ const ComicsList = () => {
 
   return (
     <div className="comics__list">
-      <AppBanner />
       {errorMessage}
       {spinner}
       {renederedComics(comicsList)}

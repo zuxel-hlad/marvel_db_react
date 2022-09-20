@@ -24,6 +24,7 @@ const CharInfo = (props) => {
     const chars = await getAllCharacters();
     onCharLoaded(chars[7]);
   };
+
   const updateChar = async () => {
     const { charId } = props;
     if (!charId) return;

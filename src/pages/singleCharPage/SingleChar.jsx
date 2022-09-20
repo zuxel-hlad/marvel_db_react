@@ -1,4 +1,5 @@
 import {useHistory} from 'react-router-dom';
+import {Helmet} from "react-helmet";
 import comicsListDefaultImage from '../../resources/img/comics-list-default.jpg';
 import ListImage from '../../components/listImage/ListImage';
 import './singleChar.scss';
@@ -9,6 +10,10 @@ const SingleChar = ({data}) => {
 
   return (
     <div className="single-comic">
+      <Helmet>
+        <meta name="description" content={`${description}`} />
+        <title>{name}</title>
+      </Helmet>
       <ListImage
         src={thumbnail}
         image={comicsListDefaultImage}
