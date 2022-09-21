@@ -8,7 +8,7 @@ import ErrorMessage from "../errorMessage/ErrorMessage";
 
 const SearchCharForm = () => {
   const [searchedChar, setSearchedChar] = useState(null);
-  const {loading, error, getCharacterByName, clearError} = useApi();
+  const { getCharacterByName, clearError, process, setProcess} = useApi();
 
   const onCharLoaded = (char) => {
     setSearchedChar(char);
@@ -19,6 +19,7 @@ const SearchCharForm = () => {
     setSearchedChar(null);
     const responseChar = await getCharacterByName(name);
     onCharLoaded(responseChar);
+    setProcess('confirmed');
   };
 
   const searchResults = !searchedChar ? null : searchedChar.length > 0 ?
@@ -39,7 +40,7 @@ const SearchCharForm = () => {
         </span>
     </div>;
 
-  const errorMessage = error ? <div className="search-form__critical-error"><ErrorMessage/></div> : null;
+  const errorMessage = process === 'error' ? <div className="search-form__critical-error"><ErrorMessage/></div> : null;
 
   return (
     <Formik
@@ -68,7 +69,7 @@ const SearchCharForm = () => {
           <button
             className="button button__main"
             type="submit"
-            disabled={loading}>
+            disabled={process === 'loading'}>
             <div className="inner">FIND</div>
           </button>
         </div>
