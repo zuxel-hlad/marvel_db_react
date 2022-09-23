@@ -18,26 +18,6 @@
       height: 345px;
     }
 
-    &-enter {
-      transform: scale(0);
-    }
-
-    &-enter-active {
-      opacity: 0;
-    }
-
-    &-enter-done {
-      transform: scale(1);
-    }
-
-    &-exit {
-      transform: scale(1);
-    }
-
-    &-exit-active {
-      opacity: 0;
-    }
-
     &-name {
       margin-top: 10px;
       font-weight: bold;

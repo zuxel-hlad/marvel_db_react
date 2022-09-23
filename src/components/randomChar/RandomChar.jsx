@@ -9,14 +9,19 @@ import setContent from "../../utils/setContent";
 const RandomChar = (props) => {
   const [char, setChar] = useState({});
   const {getCharacter, clearError, process, setProcess} = useApi();
-  useEffect(() => updateChar(), []);
+  useEffect(() => {
+    updateChar()
+    // eslint-disable-next-line
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
       updateChar();
+
     }, 30000);
 
     return () => clearInterval(interval);
+    // eslint-disable-next-line
   }, []);
 
   const onCharLoaded = (char) => {

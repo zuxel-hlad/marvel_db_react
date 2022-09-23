@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import CharListItem from '../charListItem/CharListItem';
 import './charList.scss';
 import useApi from '../../services/MarvelService';
-import {CSSTransition, TransitionGroup} from 'react-transition-group';
 import Spinner from "../spinner/Spinner";
 import ErrorMessage from "../errorMessage/ErrorMessage";
 
@@ -12,16 +11,12 @@ const setContent = (process, Component, newItemLoading) => {
   switch (process) {
     case 'waiting':
       return <Spinner/>;
-      break;
     case 'loading':
       return newItemLoading ? <Component/> : <Spinner/>;
-      break;
     case 'confirmed':
       return <Component/>;
-      break;
     case 'error':
       return <ErrorMessage/>
-      break;
     default:
       throw new Error('Unexpected process state');
   }
@@ -34,7 +29,10 @@ const CharList = (props) => {
   const [charEnded, setCharEnded] = useState(false);
   const {getAllCharacters, process, setProcess} = useApi();
 
-  useEffect(() => updateCharList(charOffset, true), []);
+  useEffect(() => {
+    updateCharList(charOffset, true)
+    // eslint-disable-next-line
+  }, []);
 
   const onCharListLoaded = (allCharacters) => {
     let endedCharsFromApi = false;
@@ -55,7 +53,7 @@ const CharList = (props) => {
   const setSelected = (id) => {
     const {setSelectedChar} = props;
 
-    const charlistWithSelectedChar = characters.map((char) => {
+    const charListWithSelectedChar = characters.map((char) => {
       if (char.id === id) {
         return {...char, selected: !char.selected};
       }
@@ -64,22 +62,18 @@ const CharList = (props) => {
     });
 
     setSelectedChar(id);
-    setCharacters(charlistWithSelectedChar);
+    setCharacters(charListWithSelectedChar);
   };
 
   const renderedItems = (arr) => {
     const charCards = arr.map((char, index) => {
-      return (
-        <CSSTransition key={char.id} classNames="char__item" timeout={300}>
-          <CharListItem {...char} index={index} setSelected={setSelected}/>
-        </CSSTransition>
-      );
+      return <CharListItem {...char} index={index} setSelected={setSelected} key={char.id}/>
     });
 
     return (
-      <TransitionGroup component={'ul'} className="char__grid">
+      <ul className="char__grid">
         {charCards}
-      </TransitionGroup>
+      </ul>
     );
   };
 

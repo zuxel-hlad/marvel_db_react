@@ -6,10 +6,14 @@ import useApi from '../../services/MarvelService';
 import setContent from "../../utils/setContent";
 
 const CharInfo = (props) => {
+  const {charId} = props;
   const [char, setChar] = useState(null);
   const {getCharacter, clearError, process, setProcess} = useApi();
 
-  useEffect(() => updateChar(), [props.charId]);
+  useEffect(() => {
+    updateChar()
+    // eslint-disable-next-line
+  }, [charId]);
 
   const onCharLoaded = (char) => {
     setChar({...char});

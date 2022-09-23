@@ -6,22 +6,18 @@ import useApi from '../../services/MarvelService';
 import ListImage from '../listImage/ListImage';
 import {Link} from 'react-router-dom';
 import comicsListDefaultImage from '../../resources/img/comics-list-default.jpg';
-import {CSSTransition, TransitionGroup} from 'react-transition-group';
 
 const setContent = (process, Component, newItemLoading) => {
   switch (process) {
     case 'waiting':
       return <Spinner/>;
-      break;
     case 'loading':
       return newItemLoading ? <Component/> : <Spinner/>;
-      break;
     case 'confirmed':
       return <Component/>;
-      break;
     case 'error':
       return <ErrorMessage/>
-      break;
+
     default:
       throw new Error('Unexpected process state');
   }
@@ -32,9 +28,12 @@ const ComicsList = () => {
   const [comicsList, setComicsList] = useState([]);
   const [comicsEnded, setComicsEnded] = useState(false);
   const [newItemLoading, setNewItemLoading] = useState(false);
-  const {loading, error, getComics, process, setProcess} = useApi();
+  const {getComics, process, setProcess} = useApi();
 
-  useEffect(() => updateComicsList(comicsOffset, true), []);
+  useEffect(() => {
+    updateComicsList(comicsOffset, true);
+    // eslint-disable-next-line
+  }, []);
 
   const onComicsListLoaded = (comics) => {
     let comicsEndedFromApi = false;
@@ -58,26 +57,24 @@ const ComicsList = () => {
       const {title, price, thumbnail, id} = item;
 
       return (
-        <CSSTransition key={idx} classNames="comics__item" timeout={300}>
-          <li className="comics__item">
-            <Link to={`comics/${id}`}>
-              <ListImage
-                src={thumbnail}
-                image={comicsListDefaultImage}
-                imageClassName="comics__item-img"
-                alt={title}
-              />
-              <div className="comics__item-name">{title}</div>
-              <div className="comics__item-price">{price}</div>
-            </Link>
-          </li>
-        </CSSTransition>
+        <li className="comics__item" key={idx}>
+          <Link to={`comics/${id}`}>
+            <ListImage
+              src={thumbnail}
+              image={comicsListDefaultImage}
+              imageClassName="comics__item-img"
+              alt={title}
+            />
+            <div className="comics__item-name">{title}</div>
+            <div className="comics__item-price">{price}</div>
+          </Link>
+        </li>
       );
     });
     return (
-      <TransitionGroup className="comics__grid" component={'ul'}>
+      <ul className="comics__grid">
         {comics}
-      </TransitionGroup>
+      </ul>
     );
   };
 
