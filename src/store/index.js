@@ -12,7 +12,7 @@ const stringMiddleware =
         return next(action);
     };
 
-const store = configureStore({
+const store = configureStore({ 
     reducer: {
         [marvelApi.reducerPath]: marvelApi.reducer,
     },

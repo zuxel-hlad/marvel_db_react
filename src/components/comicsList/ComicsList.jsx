@@ -20,7 +20,7 @@ const setContent = (isError, isFetching, isLoading, Component) => {
     }
 };
 
-const ComicsList = ({ comicsList, isError, isLoading, isFetching }) => {
+const ComicsList = ({ comicsList, isError, isLoading, isFetching, loadMore }) => {
     // const [comicsOffset, setComicsOffset] = useState(0);
     // const [comicsList, setComicsList] = useState([]);
     // const [comicsEnded, setComicsEnded] = useState(false);
@@ -87,6 +87,7 @@ const ComicsList = ({ comicsList, isError, isLoading, isFetching }) => {
             )}
             {
                 <button
+                    onClick={loadMore}
                     disabled={isFetching}
                     className={`button button__main button__long ${hideBtn}`}
                 >

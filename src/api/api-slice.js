@@ -10,7 +10,7 @@ export const marvelApi = createApi({
     }),
     endpoints: (builder) => ({
         getComics: builder.query({
-            query: (offset = 0) => `comics?limit=8&offset=${offset}&${apiKey}`,
+            query: (limit = 8) => `comics?limit=${limit}&offset=0&${apiKey}`,
             transformResponse: (comics, meta, arg) =>
                 comics.data.results.map(transformComics),
         }),
