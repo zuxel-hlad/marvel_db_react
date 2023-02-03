@@ -1,17 +1,15 @@
 import './comicsList.scss';
-import { useState, useEffect } from 'react';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
-import useApi from '../../services/MarvelService';
 import ListImage from '../listImage/ListImage';
 import { Link } from 'react-router-dom';
 import comicsListDefaultImage from '../../resources/img/comics-list-default.jpg';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
-const setContent = (isError, isFetching, isLoading, Component) => {
-    if (isLoading || isFetching) {
+const setContent = (isError, isLoading, Component) => {
+    if (isLoading) {
         return <Spinner />;
-    } else if (!isFetching && !isLoading && !isError) {
+    } else if (!isLoading && !isError) {
         return <Component />;
     } else if (isError) {
         return <ErrorMessage />;
@@ -20,32 +18,13 @@ const setContent = (isError, isFetching, isLoading, Component) => {
     }
 };
 
-const ComicsList = ({ comicsList, isError, isLoading, isFetching, loadMore }) => {
-    // const [comicsOffset, setComicsOffset] = useState(0);
-    // const [comicsList, setComicsList] = useState([]);
-    // const [comicsEnded, setComicsEnded] = useState(false);
-    // const [newItemLoading, setNewItemLoading] = useState(false);
-    // const { getComics, process, setProcess } = useApi();
-
-    // useEffect(() => updateComicsList(comicsOffset, true), []);
-
-    // const onComicsListLoaded = (comics) => {
-    //     let comicsEndedFromApi = false;
-    //     if (comics.length < 8) {
-    //         comicsEndedFromApi = true;
-    //     }
-    //     setComicsList(() => [...comicsList, ...comics]);
-    //     setComicsOffset((comicsOffset) => comicsOffset + 8);
-    //     setNewItemLoading(false);
-    //     setComicsEnded(comicsEndedFromApi);
-    // };
-    // const updateComicsList = async (offset, initialValue) => {
-    //     initialValue ? setNewItemLoading(false) : setNewItemLoading(true);
-    //     const response = await getComics(offset);
-    //     onComicsListLoaded(response);
-    //     setProcess('confirmed');
-    // };
-
+const ComicsList = ({
+    comicsList,
+    isError,
+    isLoading,
+    isFetching,
+    loadMore,
+}) => {
     const renederedComics = (list) => {
         const comics = list.map((item, idx) => {
             const { title, price, thumbnail, id } = item;
@@ -78,13 +57,11 @@ const ComicsList = ({ comicsList, isError, isLoading, isFetching, loadMore }) =>
         );
     };
 
-    const hideBtn = false ? 'button__hide' : '';
+    const hideBtn = isLoading || comicsList.length === 0 ? 'button__hide' : '';
 
     return (
         <div className="comics__list">
-            {setContent(isError, isLoading, isFetching, () =>
-                renederedComics(comicsList)
-            )}
+            {setContent(isError, isLoading, () => renederedComics(comicsList))}
             {
                 <button
                     onClick={loadMore}

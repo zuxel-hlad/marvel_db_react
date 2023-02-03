@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 export default (comic) => {
     return {
         title: comic.title,

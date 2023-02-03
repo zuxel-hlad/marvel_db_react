@@ -5,17 +5,17 @@ import { useGetComicsQuery } from '../../api/api-slice';
 import { useState, useCallback } from 'react';
 
 const Comics = () => {
-    const [comicsLimit, setComicsLimit] = useState(8)
+    const [comicsOffset, setComicsOffset] = useState(54060);
     const {
-        data: comics = [],
+        data = [],
         isLoading,
         isFetching,
         isError,
-    } = useGetComicsQuery(comicsLimit);
-
+    } = useGetComicsQuery(comicsOffset);
     const loadMoreComics = useCallback(() => {
-        setComicsLimit(limit => limit + 8)
-    },[])
+        setComicsOffset((offset) => offset + 8);
+        console.log(data);
+    }, [data]);
 
     return (
         <>
@@ -28,7 +28,7 @@ const Comics = () => {
             </Helmet>
             <AppBanner />
             <ComicsList
-                comicsList={comics}
+                comicsList={data}
                 isLoading={isLoading}
                 isFetching={isFetching}
                 isError={isError}

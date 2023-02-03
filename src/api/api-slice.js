@@ -10,9 +10,20 @@ export const marvelApi = createApi({
     }),
     endpoints: (builder) => ({
         getComics: builder.query({
-            query: (limit = 8) => `comics?limit=${limit}&offset=0&${apiKey}`,
+            query: (offset = 0) => `comics?limit=8&offset=${offset}&${apiKey}`,
             transformResponse: (comics, meta, arg) =>
                 comics.data.results.map(transformComics),
+            serializeQueryArgs: ({ endpointName }) => {
+                return endpointName;
+            },
+            // Always merge incoming data to the cache entry
+            merge: (currentCache, newItems) => {
+                currentCache.push(...newItems);
+            },
+            // Refetch when the page arg changes
+            forceRefetch({ currentArg, previousArg }) {
+                return currentArg !== previousArg;
+            },
         }),
         getRandomChar: builder.query({
             query: () => {
