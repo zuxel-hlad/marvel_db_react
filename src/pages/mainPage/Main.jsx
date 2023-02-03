@@ -1,42 +1,54 @@
-import {Helmet} from "react-helmet";
-import { useState } from 'react';
+import { Helmet } from 'react-helmet';
+import { useState, useCallback } from 'react';
 import RandomChar from '../../components/randomChar/RandomChar';
 import CharList from '../../components/charList/CharList';
 import CharInfo from '../../components/charInfo/CharInfo';
 import SearchCharForm from '../../components/searchCharForm/searchCharForm';
 import ErrorBoundary from '../../components/errorBoundary/ErrorBoundary';
 import decoration from '../../resources/img/vision.png';
+import { useGetRandomCharQuery } from '../../api/api-slice';
 
 const Main = () => {
-  const [selectedChar, setChar] = useState(null);
+    const {
+        data: charData,
+        isLoading,
+        isFetching,
+        isError,
+    } = useGetRandomCharQuery(null, { pollingInterval: 30000 });
+    const [selectedChar, setChar] = useState(null);
 
-  const setSelectedChar = (id) => setChar(id);
+    const setSelectedChar = useCallback((id) => setChar(id), []);
 
-  return (
-    <>
-      <Helmet>
-        <meta name="description" content="Marvel information portal" />
-        <title>Marvel information portal</title>
-      </Helmet>
-      <ErrorBoundary>
-        <RandomChar />
-      </ErrorBoundary>
-      <div className="char__content">
-        <ErrorBoundary>
-          <CharList setSelectedChar={setSelectedChar} />
-        </ErrorBoundary>
-        <div>
-          <ErrorBoundary>
-            <CharInfo charId={selectedChar} />
-          </ErrorBoundary>
-          <ErrorBoundary>
-            <SearchCharForm />
-          </ErrorBoundary>
-        </div>
-      </div>
-      <img className="bg-decoration" src={decoration} alt="vision" />
-    </>
-  );
+    return (
+        <>
+            <Helmet>
+                <meta name="description" content="Marvel information portal" />
+                <title>Marvel information portal</title>
+            </Helmet>
+            <ErrorBoundary>
+                <RandomChar
+                    data={charData}
+                    isLoading={isLoading}
+                    isFetching={isFetching}
+                    isError={isError}
+                />
+            </ErrorBoundary>
+            <div className="char__content">
+                <ErrorBoundary>
+                    <CharList setSelectedChar={setSelectedChar} />
+                </ErrorBoundary>
+                <div>
+                    <ErrorBoundary>
+                        <CharInfo charId={selectedChar} />
+                    </ErrorBoundary>
+                    <ErrorBoundary>
+                        <SearchCharForm />
+                    </ErrorBoundary>
+                </div>
+            </div>
+            <img className="bg-decoration" src={decoration} alt="vision" />
+        </>
+    );
 };
 
 export default Main;

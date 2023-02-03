@@ -1,39 +1,28 @@
-import {useState, useEffect} from 'react';
-import useApi from '../../services/MarvelService';
-import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 import ListImage from "../listImage/ListImage";
 import randomCharImageDefault from '../../resources/img/char-list-default.png';
-import setContent from "../../utils/setContent";
+import Spinner from '../spinner/Spinner';
+import ErrorMessage from '../errorMessage/ErrorMessage';
+import './randomChar.scss';
 
-const RandomChar = (props) => {
-  const [char, setChar] = useState({});
-  const {getCharacter, clearError, process, setProcess} = useApi();
-  useEffect(() => updateChar(), []);
+const setContent = (isError, isFetching, isLoading, Component, data) => {
+    console.log('FROM SWITCH', data)
+  if (isLoading || isFetching) {
+      return <Spinner />;
+  } else if (!isFetching && !isLoading && !isError) {
+      return <Component data={data} />;
+  } else if (isError) {
+      return <ErrorMessage />;
+  } else {
+      throw new Error('Unexpected Error');
+  }
+};
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      updateChar();
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const onCharLoaded = (char) => {
-    setChar({...char});
-  };
-
-  const updateChar = async () => {
-    clearError();
-    const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
-    const char = await getCharacter(id);
-    onCharLoaded(char);
-    setProcess('confirmed');
-  };
+const RandomChar = ({isError, isFetching, isLoading, data}) => {
 
   return (
     <div className="randomchar">
-      {setContent(process, View, char)}
+      {setContent(isError, isFetching, isLoading, View, data) }
       <div className="randomchar__static">
         <p className="randomchar__title">
           Random character for today!
@@ -41,7 +30,7 @@ const RandomChar = (props) => {
           Do you want to get to know him better?
         </p>
         <p className="randomchar__title">Or choose another one</p>
-        <button className="button button__main" onClick={updateChar}>
+        <button className="button button__main">
           <div className="inner">try it</div>
         </button>
         <img src={mjolnir} alt="mjolnir" className="randomchar__decoration"/>
@@ -51,6 +40,7 @@ const RandomChar = (props) => {
 };
 
 const View = ({data}) => {
+  console.log(data);
   const {name, description, thumbnail, homepage, wiki} = data;
 
   return (

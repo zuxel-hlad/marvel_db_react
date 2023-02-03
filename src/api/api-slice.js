@@ -14,6 +14,16 @@ export const marvelApi = createApi({
             transformResponse: (comics, meta, arg) =>
                 comics.data.results.map(transformComics),
         }),
+        getRandomChar: builder.query({
+            query: () => {
+                const id = Math.floor(
+                    Math.random() * (1011400 - 1011000) + 1011000
+                );
+                return `characters/${id}?&${apiKey}`;
+            },
+            transformResponse: (char) =>
+                transformCharacters(char.data.results[0]),
+        }),
         getSinglePageData: builder.query({
             query: ({ id, dataType }) => {
                 if (dataType === 'comic' && id) {
@@ -37,4 +47,8 @@ export const marvelApi = createApi({
     }),
 });
 
-export const { useGetComicsQuery, useGetSinglePageDataQuery } = marvelApi;
+export const {
+    useGetComicsQuery,
+    useGetSinglePageDataQuery,
+    useGetRandomCharQuery,
+} = marvelApi;
