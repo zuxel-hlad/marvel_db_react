@@ -6,9 +6,11 @@ import { Link } from 'react-router-dom';
 import comicsListDefaultImage from '../../resources/img/comics-list-default.jpg';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
-const setContent = (isError, isLoading, Component) => {
+const setContent = (isError, isLoading, Component, data) => {
     if (isLoading) {
         return <Spinner />;
+    } else if (!isLoading && !isError && !data.length) {
+        return <div className="comics__item-name">Comics list is empty</div>;
     } else if (!isLoading && !isError) {
         return <Component />;
     } else if (isError) {
@@ -24,6 +26,7 @@ const ComicsList = ({
     isLoading,
     isFetching,
     loadMore,
+    comicsLimit,
 }) => {
     const renederedComics = (list) => {
         const comics = list.map((item, idx) => {
@@ -57,11 +60,19 @@ const ComicsList = ({
         );
     };
 
-    const hideBtn = isLoading || comicsList.length === 0 ? 'button__hide' : '';
+    const hideBtn =
+        isLoading || comicsList.length === 0 || comicsLimit
+            ? 'button__hide'
+            : '';
 
     return (
         <div className="comics__list">
-            {setContent(isError, isLoading, () => renederedComics(comicsList))}
+            {setContent(
+                isError,
+                isLoading,
+                () => renederedComics(comicsList),
+                comicsList
+            )}
             {
                 <button
                     onClick={loadMore}

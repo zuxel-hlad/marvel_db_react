@@ -2,10 +2,10 @@ import ComicsList from '../../components/comicsList/ComicsList';
 import AppBanner from '../../components/appBanner/AppBanner';
 import { Helmet } from 'react-helmet';
 import { useGetComicsQuery } from '../../api/api-slice';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 
 const Comics = () => {
-    const [comicsOffset, setComicsOffset] = useState(54060);
+    const [comicsOffset, setComicsOffset] = useState(0);
     const {
         data = [],
         isLoading,
@@ -13,8 +13,18 @@ const Comics = () => {
         isError,
     } = useGetComicsQuery(comicsOffset);
     const loadMoreComics = useCallback(() => {
+        if (comicsOffset.length === data[0].total - 1) {
+            console.log('limit');
+        }
         setComicsOffset((offset) => offset + 8);
-        console.log(data);
+    }, [data]);
+
+    const comicsLimit = useMemo(() => {
+        if (!isLoading) {
+            return (
+                data[data.length - 1].offset === data[data.length - 1].total - 1
+            );
+        }
     }, [data]);
 
     return (
@@ -33,6 +43,7 @@ const Comics = () => {
                 isFetching={isFetching}
                 isError={isError}
                 loadMore={loadMoreComics}
+                comicsLimit={comicsLimit}
             />
         </>
     );
