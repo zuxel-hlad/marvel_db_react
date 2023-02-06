@@ -26,10 +26,7 @@ export const marvelApi = createApi({
             },
         }),
         getRandomChar: builder.query({
-            query: () => {
-                const id = Math.floor(
-                    Math.random() * (1011400 - 1011000) + 1011000
-                );
+            query: (id) => {
                 return `characters/${id}?&${apiKey}`;
             },
             transformResponse: (char) =>

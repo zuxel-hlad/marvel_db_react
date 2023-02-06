@@ -3,6 +3,7 @@ import ListImage from '../listImage/ListImage';
 import randomCharImageDefault from '../../resources/img/char-list-default.png';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
+import { memo } from 'react';
 import './randomChar.scss';
 
 const setContent = (isError, isFetching, isLoading, Component, data) => {
@@ -17,7 +18,14 @@ const setContent = (isError, isFetching, isLoading, Component, data) => {
     }
 };
 
-const RandomChar = ({ isError, isFetching, isLoading, data }) => {
+const RandomChar = ({
+    isError,
+    isFetching,
+    isLoading,
+    data,
+    updateRandomChar,
+}) => {
+    if (!data || !Object.keys(data).length) return null;
     return (
         <div className="randomchar">
             {setContent(isError, isFetching, isLoading, View, data)}
@@ -28,7 +36,10 @@ const RandomChar = ({ isError, isFetching, isLoading, data }) => {
                     Do you want to get to know him better?
                 </p>
                 <p className="randomchar__title">Or choose another one</p>
-                <button className="button button__main">
+                <button
+                    className="button button__main"
+                    onClick={updateRandomChar}
+                >
                     <div className="inner">try it</div>
                 </button>
                 <img
@@ -42,7 +53,6 @@ const RandomChar = ({ isError, isFetching, isLoading, data }) => {
 };
 
 const View = ({ data }) => {
-    console.log(data);
     const { name, description, thumbnail, homepage, wiki } = data;
 
     return (
@@ -69,4 +79,4 @@ const View = ({ data }) => {
     );
 };
 
-export default RandomChar;
+export default memo(RandomChar);
