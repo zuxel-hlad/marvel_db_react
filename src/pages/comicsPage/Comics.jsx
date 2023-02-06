@@ -12,18 +12,18 @@ const Comics = () => {
         isFetching,
         isError,
     } = useGetComicsQuery(comicsOffset);
+    
     const loadMoreComics = useCallback(() => {
-        if (comicsOffset.length === data[0].total - 1) {
-            console.log('limit');
-        }
         setComicsOffset((offset) => offset + 8);
     }, [data]);
 
     const comicsLimit = useMemo(() => {
-        if (!isLoading) {
+        if (data.length) {
             return (
                 data[data.length - 1].offset === data[data.length - 1].total - 1
             );
+        } else {
+            return;
         }
     }, [data]);
 
