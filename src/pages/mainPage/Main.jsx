@@ -6,9 +6,13 @@ import CharInfo from '../../components/charInfo/CharInfo';
 import SearchCharForm from '../../components/searchCharForm/searchCharForm';
 import ErrorBoundary from '../../components/errorBoundary/ErrorBoundary';
 import decoration from '../../resources/img/vision.png';
-import { useGetRandomCharQuery } from '../../api/api-slice';
+import {
+    useGetRandomCharQuery,
+    useGetCharactersQuery,
+} from '../../api/api-slice';
 
 const Main = () => {
+    const [charactersLimit, setCharactersLimit] = useState(210);
     const [randomId, setRandomId] = useState(1011000);
     const {
         data: charData,
@@ -16,6 +20,17 @@ const Main = () => {
         isFetching,
         isError,
     } = useGetRandomCharQuery(randomId);
+
+    const {
+        data: charactersData,
+        isError: charactersIsError,
+        isFetching: charactersIsFetching,
+        isLoading: charactersIsLoading,
+    } = useGetCharactersQuery(charactersLimit, { skip: false });
+
+    if (charactersData) {
+        console.log(charactersData);
+    }
 
     const [selectedChar, setChar] = useState(null);
 
@@ -45,6 +60,9 @@ const Main = () => {
                     isError={isError}
                     updateRandomChar={updateRandomChar}
                 />
+                <button onClick={() => setCharactersLimit((prev) => prev + 1)}>
+                    UPPPPP
+                </button>
             </ErrorBoundary>
             <div className="char__content">
                 <ErrorBoundary>
