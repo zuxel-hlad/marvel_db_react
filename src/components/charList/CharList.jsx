@@ -1,67 +1,32 @@
-import { useState, useEffect, memo } from 'react';
+import { memo } from 'react';
 import PropTypes from 'prop-types';
 import CharListItem from '../charListItem/CharListItem';
 import './charList.scss';
-import useApi from '../../services/MarvelService';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 
-const setContent = (process, Component, newItemLoading) => {
-    switch (process) {
-        case 'waiting':
-            return <Spinner />;
-        case 'loading':
-            return newItemLoading ? <Component /> : <Spinner />;
-        case 'confirmed':
-            return <Component />;
-        case 'error':
-            return <ErrorMessage />;
-        default:
-            throw new Error('Unexpected process state');
+const setContent = (isLoading, isError, Component, data) => {
+    if (isLoading) {
+        return <Spinner />;
+    } else if (!isLoading && !isError && !data) {
+        return <div className="comics__item-name">Comics list is empty</div>;
+    } else if (!isLoading && !isError) {
+        return <Component />;
+    } else if (isError) {
+        return <ErrorMessage />;
+    } else {
+        throw new Error('Unexpected Error');
     }
 };
 
-const CharList = (props) => {
-    const [characters, setCharacters] = useState([]);
-    const [newItemLoading, setNewItemLoading] = useState(false);
-    const [charOffset, setCharOffset] = useState(210);
-    const [charEnded, setCharEnded] = useState(false);
-    const { getAllCharacters, process, setProcess } = useApi();
-
-    useEffect(() => updateCharList(charOffset, true), []);
-
-    const onCharListLoaded = (allCharacters) => {
-        let endedCharsFromApi = false;
-        if (allCharacters.length < 9) endedCharsFromApi = true;
-        setCharacters((characters) => [...characters, ...allCharacters]);
-        setCharOffset((charOffset) => charOffset + 9);
-        setNewItemLoading(false);
-        setCharEnded(endedCharsFromApi);
-    };
-
-    const updateCharList = async (offset, initial) => {
-        initial ? setNewItemLoading(false) : setNewItemLoading(true);
-        const charList = await getAllCharacters(offset);
-        onCharListLoaded(charList);
-        setProcess('confirmed');
-    };
-
-    const setSelected = (id) => {
-        const { setSelectedChar } = props;
-
-        const charlistWithSelectedChar = characters.map((char) => {
-            if (char.id === id) {
-                return { ...char, selected: !char.selected };
-            }
-
-            return char;
-        });
-
-        setSelectedChar(id);
-        setCharacters(charlistWithSelectedChar);
-    };
-
+const CharList = ({
+    data,
+    isLoading,
+    isFetching,
+    isError,
+    loadMoreCharacters,
+}) => {
     const renderedItems = (arr) => {
         const charCards = arr.map((char, index) => {
             return (
@@ -73,7 +38,6 @@ const CharList = (props) => {
                     <CharListItem
                         {...char}
                         index={index}
-                        setSelected={setSelected}
                     />
                 </CSSTransition>
             );
@@ -86,28 +50,20 @@ const CharList = (props) => {
         );
     };
 
-    const hideBtn = charEnded ? 'button__hide' : '';
+    const hideBtn = isLoading ? 'button__hide' : '';
 
     return (
         <div className="char__list">
-            {setContent(
-                process,
-                () => renderedItems(characters),
-                newItemLoading
-            )}
+            {setContent(isLoading, isError, () => renderedItems(data), data)}
             <button
                 className={`button button__main button__long ${hideBtn}`}
-                disabled={newItemLoading}
-                onClick={() => updateCharList(charOffset, false)}
+                disabled={isFetching}
+                onClick={loadMoreCharacters}
             >
                 <div className="inner">load more</div>
             </button>
         </div>
     );
-};
-
-CharList.propTypes = {
-    setSelectedChar: PropTypes.func.isRequired,
 };
 
 export default memo(CharList);

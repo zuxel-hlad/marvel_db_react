@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import RandomChar from '../../components/randomChar/RandomChar';
 import CharList from '../../components/charList/CharList';
 import CharInfo from '../../components/charInfo/CharInfo';
@@ -13,37 +13,17 @@ import {
 
 const Main = () => {
     const [charactersLimit, setCharactersLimit] = useState(210);
-    const [randomId, setRandomId] = useState(1011000);
-    const {
-        data: charData,
-        isLoading,
-        isFetching,
-        isError,
-    } = useGetRandomCharQuery(randomId);
+    const randomChar = useGetRandomCharQuery(undefined, {
+        pollingInterval: 30000,
+    });
+    const charList = useGetCharactersQuery(charactersLimit);
 
-    const {
-        data: charactersData,
-        isError: charactersIsError,
-        isFetching: charactersIsFetching,
-        isLoading: charactersIsLoading,
-    } = useGetCharactersQuery(charactersLimit, { skip: false });
-
-    if (charactersData) {
-        console.log(charactersData);
-    }
-
-    const [selectedChar, setChar] = useState(null);
-
-    const setSelectedChar = useCallback((id) => setChar(id), []);
     const updateRandomChar = useCallback(() => {
-        setRandomId(Math.floor(Math.random() * (1011400 - 1011000) + 1011000));
+        randomChar.refetch();
     }, []);
 
-    useEffect(() => {
-        const interval = setInterval(updateRandomChar, 30000);
-        return () => {
-            clearInterval(interval);
-        };
+    const loadMoreCharacters = useCallback(() => {
+        setCharactersLimit((limit) => limit + 9);
     }, []);
 
     return (
@@ -54,23 +34,20 @@ const Main = () => {
             </Helmet>
             <ErrorBoundary>
                 <RandomChar
-                    data={charData}
-                    isLoading={isLoading}
-                    isFetching={isFetching}
-                    isError={isError}
+                    {...randomChar}
                     updateRandomChar={updateRandomChar}
                 />
-                <button onClick={() => setCharactersLimit((prev) => prev + 1)}>
-                    UPPPPP
-                </button>
             </ErrorBoundary>
             <div className="char__content">
                 <ErrorBoundary>
-                    <CharList setSelectedChar={setSelectedChar} />
+                    <CharList
+                        {...charList}
+                        loadMoreCharacters={loadMoreCharacters}
+                    />
                 </ErrorBoundary>
                 <div>
                     <ErrorBoundary>
-                        <CharInfo charId={selectedChar} />
+                        <CharInfo />
                     </ErrorBoundary>
                     <ErrorBoundary>
                         <SearchCharForm />

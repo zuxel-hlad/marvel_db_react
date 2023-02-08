@@ -39,18 +39,14 @@ export const marvelApi = createApi({
             },
             // // Refetch when the page arg changes
             forceRefetch({ currentArg, previousArg }) {
-                console.log(
-                    'currentArg :',
-                    currentArg,
-                    'previousArg :',
-                    previousArg
-                );
                 return currentArg !== previousArg;
             },
         }),
         getRandomChar: builder.query({
-            query: (id) => {
-                return `characters/${id}?&${apiKey}`;
+            query: () => {
+                return `characters/${Math.floor(
+                    Math.random() * (1011400 - 1011000) + 1011000
+                )}?&${apiKey}`;
             },
             transformResponse: transformSingleChar,
         }),
@@ -83,7 +79,7 @@ export const marvelApi = createApi({
 
 export const {
     useGetComicsQuery,
-    useGetCharactersQuery,
     useGetSinglePageDataQuery,
     useGetRandomCharQuery,
+    useGetCharactersQuery,
 } = marvelApi;
