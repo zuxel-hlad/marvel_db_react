@@ -1,5 +1,4 @@
 import { memo } from 'react';
-import PropTypes from 'prop-types';
 import CharListItem from '../charListItem/CharListItem';
 import './charList.scss';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
@@ -26,6 +25,8 @@ const CharList = ({
     isFetching,
     isError,
     loadMoreCharacters,
+    setSelectedChar,
+    charactersLimit,
 }) => {
     const renderedItems = (arr) => {
         const charCards = arr.map((char, index) => {
@@ -38,6 +39,7 @@ const CharList = ({
                     <CharListItem
                         {...char}
                         index={index}
+                        setSelectedChar={() => setSelectedChar(char.id)}
                     />
                 </CSSTransition>
             );
@@ -50,7 +52,7 @@ const CharList = ({
         );
     };
 
-    const hideBtn = isLoading ? 'button__hide' : '';
+    const hideBtn = isLoading || charactersLimit ? 'button__hide' : '';
 
     return (
         <div className="char__list">

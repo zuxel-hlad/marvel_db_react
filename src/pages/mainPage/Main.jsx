@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import RandomChar from '../../components/randomChar/RandomChar';
 import CharList from '../../components/charList/CharList';
 import CharInfo from '../../components/charInfo/CharInfo';
@@ -13,6 +13,7 @@ import {
 
 const Main = () => {
     const [charactersLimit, setCharactersLimit] = useState(210);
+    const [selectedCharId, setSelectedCharId] = useState(null);
     const randomChar = useGetRandomCharQuery(undefined, {
         pollingInterval: 30000,
     });
@@ -25,6 +26,24 @@ const Main = () => {
     const loadMoreCharacters = useCallback(() => {
         setCharactersLimit((limit) => limit + 9);
     }, []);
+
+    const setSelectedChar = useCallback((id) => {
+        setSelectedCharId(id);
+        console.log(charList.data[charList.data.length - 1]);
+    }, []);
+
+    const comicsLimit = useMemo(() => {
+        if (charList.data && charList.data.length) {
+            console.log(charList.data);
+
+            return (
+                charList.data[charList.data.length - 1].offset ===
+                charList.data[charList.data.length - 1].total - 1
+            );
+        } else {
+            return;
+        }
+    }, [charList.data]);
 
     return (
         <>
@@ -42,7 +61,9 @@ const Main = () => {
                 <ErrorBoundary>
                     <CharList
                         {...charList}
+                        charactersLimit={comicsLimit}
                         loadMoreCharacters={loadMoreCharacters}
+                        setSelectedChar={setSelectedChar}
                     />
                 </ErrorBoundary>
                 <div>

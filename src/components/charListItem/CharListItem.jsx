@@ -1,17 +1,17 @@
-import './charListItem.scss';
+import { useState } from 'react';
 import ListImage from '../listImage/ListImage';
 import charListDefaultImg from '../../resources/img/char-list-default.png';
-import { useState } from 'react';
+import './charListItem.scss';
 
-const CharListItem = ({ thumbnail, name, index }) => {
+const CharListItem = ({ thumbnail, name, index, setSelectedChar }) => {
     const [selected, setSelected] = useState(false);
-    const toggleSelected = (id) => {
-        setSelected((prevselected) => !prevselected);
-    };
     return (
         <li
             className={`char__item${selected ? ' char__item_selected' : ''}`}
-            onClick={toggleSelected}
+            onClick={() => {
+                setSelectedChar();
+                setSelected((prevselected) => !prevselected);
+            }}
             tabIndex={index + 1}
         >
             <ListImage
