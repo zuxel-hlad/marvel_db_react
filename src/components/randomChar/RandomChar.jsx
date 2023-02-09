@@ -25,7 +25,6 @@ const RandomChar = ({
     data,
     updateRandomChar,
 }) => {
-    console.log('render');
     if (!data || !Object.keys(data).length) return null;
     return (
         <div className="randomchar">

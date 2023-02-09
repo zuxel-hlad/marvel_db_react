@@ -7,35 +7,55 @@ import SearchCharForm from '../../components/searchCharForm/searchCharForm';
 import ErrorBoundary from '../../components/errorBoundary/ErrorBoundary';
 import decoration from '../../resources/img/vision.png';
 import {
-    useGetRandomCharQuery,
+    useGetSingleCharInfoQuery,
     useGetCharactersQuery,
+    useGetSingleItemInfoQuery,
 } from '../../api/api-slice';
 
 const Main = () => {
     const [charactersLimit, setCharactersLimit] = useState(210);
     const [selectedCharId, setSelectedCharId] = useState(null);
-    const randomChar = useGetRandomCharQuery(undefined, {
+    const [findedCharName, setFindedCharName] = useState('');
+    const randomCharInfo = useGetSingleCharInfoQuery(undefined, {
         pollingInterval: 30000,
     });
+
+    const selectedCharInfo = useGetSingleCharInfoQuery(selectedCharId);
     const charList = useGetCharactersQuery(charactersLimit);
+    const findedCharInfo = useGetSingleItemInfoQuery(undefined, 'character', findedCharName);
+    console.log(findedCharInfo)
+
+    const memoizedCharInfo = useMemo(() => {
+        return {
+            charId: selectedCharId,
+            charInfo: selectedCharInfo,
+        };
+    }, [selectedCharId]);
 
     const updateRandomChar = useCallback(() => {
-        randomChar.refetch();
+        randomCharInfo.refetch();
     }, []);
 
     const loadMoreCharacters = useCallback(() => {
         setCharactersLimit((limit) => limit + 9);
     }, []);
 
-    const setSelectedChar = useCallback((id) => {
+    const setSelectedChar = useCallback((id, ind) => {
         setSelectedCharId(id);
-        console.log(charList.data[charList.data.length - 1]);
+        const listItems = document.querySelectorAll('.char__item');
+        if (listItems[ind].classList.contains('char__item_selected')) {
+            listItems[ind].classList.remove('char__item_selected');
+        } else {
+            listItems.forEach((item) => {
+                item.classList.remove('char__item_selected');
+            });
+            listItems[ind].classList.add('char__item_selected');
+            listItems[ind].focus();
+        }
     }, []);
 
-    const comicsLimit = useMemo(() => {
+    const checkCharactersLimit = useMemo(() => {
         if (charList.data && charList.data.length) {
-            console.log(charList.data);
-
             return (
                 charList.data[charList.data.length - 1].offset ===
                 charList.data[charList.data.length - 1].total - 1
@@ -53,7 +73,7 @@ const Main = () => {
             </Helmet>
             <ErrorBoundary>
                 <RandomChar
-                    {...randomChar}
+                    {...randomCharInfo}
                     updateRandomChar={updateRandomChar}
                 />
             </ErrorBoundary>
@@ -61,14 +81,14 @@ const Main = () => {
                 <ErrorBoundary>
                     <CharList
                         {...charList}
-                        charactersLimit={comicsLimit}
+                        charactersLimit={checkCharactersLimit}
                         loadMoreCharacters={loadMoreCharacters}
                         setSelectedChar={setSelectedChar}
                     />
                 </ErrorBoundary>
                 <div>
                     <ErrorBoundary>
-                        <CharInfo />
+                        <CharInfo {...memoizedCharInfo} />
                     </ErrorBoundary>
                     <ErrorBoundary>
                         <SearchCharForm />

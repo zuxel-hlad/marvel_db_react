@@ -1,6 +1,6 @@
 import AppBanner from '../../components/appBanner/AppBanner';
 import { useParams } from 'react-router-dom';
-import { useGetSinglePageDataQuery } from '../../api/api-slice';
+import { useGetSingleItemInfoQuery } from '../../api/api-slice';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import Spinner from '../../components/spinner/Spinner';
 
@@ -18,9 +18,10 @@ const setContent = (isError, isFetching, isLoading, Component, data) => {
 
 const SinglePage = ({ Component, dataType }) => {
     const { id } = useParams();
-    const { data, isLoading, isError, isFetching } = useGetSinglePageDataQuery({
+    const { data, isLoading, isError, isFetching } = useGetSingleItemInfoQuery({
         id,
         dataType,
+        undefined,
     });
 
     return (

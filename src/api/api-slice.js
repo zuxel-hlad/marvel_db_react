@@ -11,21 +11,22 @@ export const marvelApi = createApi({
         baseUrl: 'https://gateway.marvel.com:443/v1/public/',
     }),
     endpoints: (builder) => ({
+        // get all comics
         getComics: builder.query({
             query: (offset = 0) => `comics?limit=8&offset=${offset}&${apiKey}`,
             transformResponse: transformComics,
             serializeQueryArgs: ({ endpointName }) => {
                 return endpointName;
             },
-            // Always merge incoming data to the cache entry
             merge: (currentCache, newItems) => {
                 currentCache.push(...newItems);
             },
-            // Refetch when the page arg changes
             forceRefetch({ currentArg, previousArg }) {
                 return currentArg !== previousArg;
             },
         }),
+
+        // get all characters
         getCharacters: builder.query({
             query: (offset = 210) =>
                 `characters?limit=9&offset=${offset}&${apiKey}`,
@@ -33,31 +34,34 @@ export const marvelApi = createApi({
             serializeQueryArgs: ({ endpointName }) => {
                 return endpointName;
             },
-            // // Always merge incoming data to the cache entry
             merge: (currentCache, newItems) => {
                 currentCache.push(...newItems);
             },
-            // // Refetch when the page arg changes
             forceRefetch({ currentArg, previousArg }) {
                 return currentArg !== previousArg;
             },
         }),
-        getRandomChar: builder.query({
-            query: () => {
-                return `characters/${Math.floor(
+
+        //get random char by id
+        getSingleCharInfo: builder.query({
+            query: (id) => {
+                const radomId = Math.floor(
                     Math.random() * (1011400 - 1011000) + 1011000
-                )}?&${apiKey}`;
+                );
+                return `characters/${id ? id : radomId}?&${apiKey}`;
             },
             transformResponse: transformSingleChar,
         }),
-        getSinglePageData: builder.query({
-            query: ({ id, dataType }) => {
+
+        //get info for single comic or character
+        getSingleItemInfo: builder.query({
+            query: ({ id, dataType, name }) => {
                 if (dataType === 'comic' && id) {
-                    console.log(id, dataType);
                     return `comics/${id}?&${apiKey}`;
                 } else if (dataType === 'character' && id) {
-                    console.log(id, dataType);
                     return `characters/${id}?&${apiKey}`;
+                } else if (dataType === 'character' && name) {
+                    return `characters/${name}?&${apiKey}`;
                 } else {
                     return false;
                 }
@@ -79,7 +83,7 @@ export const marvelApi = createApi({
 
 export const {
     useGetComicsQuery,
-    useGetSinglePageDataQuery,
-    useGetRandomCharQuery,
+    useGetSingleItemInfoQuery,
+    useGetSingleCharInfoQuery,
     useGetCharactersQuery,
 } = marvelApi;

@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 import CharListItem from '../charListItem/CharListItem';
 import './charList.scss';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
@@ -39,7 +39,7 @@ const CharList = ({
                     <CharListItem
                         {...char}
                         index={index}
-                        setSelectedChar={() => setSelectedChar(char.id)}
+                        onClick={() => setSelectedChar(char.id, index)}
                     />
                 </CSSTransition>
             );
