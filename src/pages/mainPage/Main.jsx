@@ -17,11 +17,15 @@ const Main = () => {
     const [selectedCharId, setSelectedCharId] = useState(null);
     const [findedCharName, setFindedCharName] = useState(undefined);
     const [skipFindChar, setSkipFindChar] = useState(true);
-    const randomCharInfo = useGetSingleCharInfoQuery(undefined, { pollingInterval: 30000 });
+    const randomCharInfo = useGetSingleCharInfoQuery(undefined, {
+        pollingInterval: 30000,
+    });
 
     const selectedCharInfo = useGetSingleCharInfoQuery(selectedCharId);
     const charList = useGetCharactersQuery(charactersLimit);
-    const findedCharInfo = useGetSingleCharInfoByNameQuery(findedCharName, { skip: skipFindChar });
+    const findedCharInfo = useGetSingleCharInfoByNameQuery(findedCharName, {
+        skip: skipFindChar,
+    });
 
     const memoizedSelectedCharInfo = useMemo(() => {
         return {

@@ -1,24 +1,9 @@
-import './comicsList.scss';
-import Spinner from '../spinner/Spinner';
-import ErrorMessage from '../errorMessage/ErrorMessage';
 import ListImage from '../listImage/ListImage';
 import { Link } from 'react-router-dom';
 import comicsListDefaultImage from '../../resources/img/comics-list-default.jpg';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-
-const setContent = (isError, isLoading, Component, data) => {
-    if (isLoading) {
-        return <Spinner />;
-    } else if (!isLoading && !isError && !data.length) {
-        return <div className="comics__item-name">Comics list is empty</div>;
-    } else if (!isLoading && !isError) {
-        return <Component />;
-    } else if (isError) {
-        return <ErrorMessage />;
-    } else {
-        throw new Error('Unexpected Error');
-    }
-};
+import setContent from '../../utils/setContent';
+import './comicsList.scss';
 
 const ComicsList = ({
     comicsList,
@@ -67,12 +52,7 @@ const ComicsList = ({
 
     return (
         <div className="comics__list">
-            {setContent(
-                isError,
-                isLoading,
-                () => renederedComics(comicsList),
-                comicsList
-            )}
+            {setContent( isError, isLoading, () => renederedComics(comicsList), comicsList )}
             {
                 <button
                     onClick={loadMore}

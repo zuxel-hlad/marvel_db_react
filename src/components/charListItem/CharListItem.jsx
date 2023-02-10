@@ -4,7 +4,12 @@ import './charListItem.scss';
 
 const CharListItem = ({ thumbnail, name, index, onClick, id }) => {
     return (
-        <li className="char__item" id={`${id}`} onClick={onClick} tabIndex={index + 1}>
+        <li
+            className="char__item"
+            id={`${id}`}
+            onClick={onClick}
+            tabIndex={index + 1}
+        >
             <ListImage
                 src={thumbnail}
                 image={charListDefaultImg}

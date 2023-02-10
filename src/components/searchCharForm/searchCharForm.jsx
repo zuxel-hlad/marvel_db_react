@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { memo, useEffect } from 'react';
+import { memo } from 'react';
 import {
     Field,
     Form,
@@ -11,7 +11,6 @@ import './serachCharForm.scss';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 
 const SearchCharForm = ({ data, isError, isLoading, isFetching, onSearch }) => {
-    useEffect(() => console.log('render') ,[])
     const searchResults = !data ? null : Object.keys(data).length > 0 ? (
         <div className="search-form__group search-form__group_footer">
             <span className="search-form__text search-form__text_success">
@@ -42,10 +41,11 @@ const SearchCharForm = ({ data, isError, isLoading, isFetching, onSearch }) => {
         <Formik
             initialValues={{ charName: '' }}
             validationSchema={Yup.object({
-                charName: Yup.string().min(
-                    2,
-                    'Please enter more than 2 symbols!'
-                ),
+                charName: Yup.string()
+                    .min(2, 'Please enter more than 2 symbols!')
+                    .required(
+                        "Field can't be empty! Please, enter the character name?"
+                    ),
             })}
             onSubmit={onSearch}
         >

@@ -1,20 +1,18 @@
-import Skeleton from "../components/skeleton/Skeleton";
-import Spinner from "../components/spinner/Spinner";
-import ErrorMessage from "../components/errorMessage/ErrorMessage";
+import Spinner from '../components/spinner/Spinner';
+import ErrorMessage from '../components/errorMessage/ErrorMessage';
 
-const setContent = (process, Component, data) => {
-  switch (process) {
-    case 'waiting':
-      return <Skeleton/>;
-    case 'loading':
-      return <Spinner/>;
-    case 'confirmed':
-      return <Component data={data}/>;
-    case 'error':
-      return <ErrorMessage/>
-    default:
-      throw new Error('Unexpected process state');
-  }
-}
+const setContent = (isError, isLoading, Component, data) => {
+    if (isLoading) {
+        return <Spinner />;
+    } else if (!isLoading && !isError && !data.length) {
+        return <div className="comics__item-name">Comics list is empty</div>;
+    } else if (!isLoading && !isError) {
+        return <Component data={data} />;
+    } else if (isError) {
+        return <ErrorMessage />;
+    } else {
+        throw new Error('Unexpected Error');
+    }
+};
 
 export default setContent;

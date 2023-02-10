@@ -1,23 +1,8 @@
 import { memo } from 'react';
 import CharListItem from '../charListItem/CharListItem';
-import './charList.scss';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import Spinner from '../spinner/Spinner';
-import ErrorMessage from '../errorMessage/ErrorMessage';
-
-const setContent = (isLoading, isError, Component, data) => {
-    if (isLoading) {
-        return <Spinner />;
-    } else if (!isLoading && !isError && !data) {
-        return <div className="comics__item-name">Comics list is empty</div>;
-    } else if (!isLoading && !isError) {
-        return <Component />;
-    } else if (isError) {
-        return <ErrorMessage />;
-    } else {
-        throw new Error('Unexpected Error');
-    }
-};
+import setContent from '../../utils/setContent';
+import './charList.scss';
 
 const CharList = ({
     data,
@@ -56,7 +41,7 @@ const CharList = ({
 
     return (
         <div className="char__list">
-            {setContent(isLoading, isError, () => renderedItems(data), data)}
+            {setContent( isError, isLoading, () => renderedItems(data), data )}
             <button
                 className={`button button__main button__long ${hideBtn}`}
                 disabled={isFetching}
