@@ -9,28 +9,32 @@ import decoration from '../../resources/img/vision.png';
 import {
     useGetSingleCharInfoQuery,
     useGetCharactersQuery,
-    useGetSingleItemInfoQuery,
+    useGetSingleCharInfoByNameQuery,
 } from '../../api/api-slice';
 
 const Main = () => {
     const [charactersLimit, setCharactersLimit] = useState(210);
     const [selectedCharId, setSelectedCharId] = useState(null);
-    const [findedCharName, setFindedCharName] = useState('');
-    const randomCharInfo = useGetSingleCharInfoQuery(undefined, {
-        pollingInterval: 30000,
-    });
+    const [findedCharName, setFindedCharName] = useState(undefined);
+    const [skipFindChar, setSkipFindChar] = useState(true);
+    const randomCharInfo = useGetSingleCharInfoQuery(undefined, { pollingInterval: 30000 });
 
     const selectedCharInfo = useGetSingleCharInfoQuery(selectedCharId);
     const charList = useGetCharactersQuery(charactersLimit);
-    const findedCharInfo = useGetSingleItemInfoQuery(undefined, 'character', findedCharName);
-    console.log(findedCharInfo)
+    const findedCharInfo = useGetSingleCharInfoByNameQuery(findedCharName, { skip: skipFindChar });
 
-    const memoizedCharInfo = useMemo(() => {
+    const memoizedSelectedCharInfo = useMemo(() => {
         return {
             charId: selectedCharId,
             charInfo: selectedCharInfo,
         };
     }, [selectedCharId]);
+
+    const findCharacterByName = useCallback(({ charName }) => {
+        console.log(charName);
+        setFindedCharName(charName);
+        setSkipFindChar(false);
+    }, []);
 
     const updateRandomChar = useCallback(() => {
         randomCharInfo.refetch();
@@ -88,10 +92,13 @@ const Main = () => {
                 </ErrorBoundary>
                 <div>
                     <ErrorBoundary>
-                        <CharInfo {...memoizedCharInfo} />
+                        <CharInfo {...memoizedSelectedCharInfo} />
                     </ErrorBoundary>
                     <ErrorBoundary>
-                        <SearchCharForm />
+                        <SearchCharForm
+                            onSearch={findCharacterByName}
+                            {...findedCharInfo}
+                        />
                     </ErrorBoundary>
                 </div>
             </div>

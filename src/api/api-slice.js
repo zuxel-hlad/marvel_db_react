@@ -3,6 +3,7 @@ import transformSingleComic from './transform-data/transform-single-comic';
 import transformSingleChar from './transform-data/transform-single-char';
 import transformComics from './transform-data/transform-comics';
 import transformCharacters from './transform-data/transform-characters';
+
 const apiKey = 'apikey=bd5992b076496b02a8ccc421dffe40bb';
 
 export const marvelApi = createApi({
@@ -53,15 +54,18 @@ export const marvelApi = createApi({
             transformResponse: transformSingleChar,
         }),
 
+        getSingleCharInfoByName: builder.query({
+            query: (name) => `characters?name=${name}&${apiKey}`,
+            transformResponse: transformSingleChar,
+        }),
+
         //get info for single comic or character
         getSingleItemInfo: builder.query({
-            query: ({ id, dataType, name }) => {
+            query: ({ id, dataType }) => {
                 if (dataType === 'comic' && id) {
                     return `comics/${id}?&${apiKey}`;
                 } else if (dataType === 'character' && id) {
                     return `characters/${id}?&${apiKey}`;
-                } else if (dataType === 'character' && name) {
-                    return `characters/${name}?&${apiKey}`;
                 } else {
                     return false;
                 }
@@ -86,4 +90,5 @@ export const {
     useGetSingleItemInfoQuery,
     useGetSingleCharInfoQuery,
     useGetCharactersQuery,
+    useGetSingleCharInfoByNameQuery,
 } = marvelApi;

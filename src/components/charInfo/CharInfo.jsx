@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useEffect, memo } from 'react';
+import { memo } from 'react';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
 import Skeleton from '../skeleton/Skeleton';
@@ -20,9 +20,7 @@ const setContent = (id, isloading, isError, Component, data) => {
 };
 
 const CharInfo = ({ charId, charInfo: { data, isloading, isError } }) => {
-    useEffect(() => {
-        console.log('render');
-    });
+
     return (
         <div className="char__info">
             {setContent(charId, isloading, isError, View, data)}

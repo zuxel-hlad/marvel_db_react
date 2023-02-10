@@ -1,4 +1,4 @@
-import { memo, useEffect } from 'react';
+import { memo } from 'react';
 import CharListItem from '../charListItem/CharListItem';
 import './charList.scss';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';

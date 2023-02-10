@@ -18,11 +18,7 @@ const setContent = (isError, isFetching, isLoading, Component, data) => {
 
 const SinglePage = ({ Component, dataType }) => {
     const { id } = useParams();
-    const { data, isLoading, isError, isFetching } = useGetSingleItemInfoQuery({
-        id,
-        dataType,
-        undefined,
-    });
+    const { data, isLoading, isError, isFetching } = useGetSingleItemInfoQuery({ id, dataType, undefined });
 
     return (
         <>
